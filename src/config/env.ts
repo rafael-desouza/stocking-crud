@@ -11,7 +11,7 @@ const fileName = (() => {
   if (isProductionEnvironment) return '.env.production'
   if (isDevelopmentEnvironment) return '.env.development'
   if (isTestEnvironment) return '.env.test'
-  return '.env'
+  return '.env.development'
 })()
 
 const envPath = resolve(__dirname, '..', '..', fileName)

@@ -29,6 +29,7 @@
     "strictPropertyInitialization": false,
     // "noImplicitThis": true,
     // "alwaysStrict": true,
+    "useUnknownInCatchVariables": false,
 
     // "noUnusedLocals": true,
     // "noUnusedParameters": true,

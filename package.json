@@ -6,14 +6,15 @@
   "author": "rafael-desouza <rafaelferreiradesouza7@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "set NODE_ENV=development&& tsnd -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify ./src/index.ts",
-    "test": "set NODE_ENV=test&& jest --i --no-cache --verbose --runInBand --bail",
+    "dev": "set NODE_ENV=development && tsnd -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify ./src/index.ts",
+    "test": "set NODE_ENV=test && jest --i --no-cache --verbose --runInBand --bail",
     "build": "yarn build:babel&&yarn build:copy",
     "build:babel": "set BABEL_ENV=build&& set NODE_ENV=production&& babel src --extensions \".ts\" --out-dir dist --source-maps --copy-files --no-copy-ignored --delete-dir-on-start --no-comments",
     "build:copy": "copy package.json dist",
     "lint": "eslint src --max-warnings=0"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "body-parser": "^1.20.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",

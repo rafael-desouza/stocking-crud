@@ -1,5 +1,3 @@
-import 'reflect-metadata'
-
 import { server } from './server'
 import { logger } from './common/logger'
 import { PORT } from './config/env'

@@ -1,4 +1,6 @@
 import path from 'path'
+import 'reflect-metadata'
+
 import { createExpressServer, RoutingControllersOptions } from 'routing-controllers'
 import { Server } from 'http'
 
