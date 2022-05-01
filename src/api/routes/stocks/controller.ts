@@ -1,12 +1,12 @@
-import { Get, HttpCode, JsonController, Param } from 'routing-controllers'
+import { Get, HttpCode, JsonController, OnUndefined, Param } from 'routing-controllers'
 import { getActualPrice } from './service'
 
 @JsonController('/stock')
 export class StocksController {
   @Get('/:stockName/quote')
-  @HttpCode(204)
-  async getAll(@Param('stockName') stockName: string) {
-    const result = await getActualPrice(stockName)
-    return result
+  @HttpCode(200)
+  @OnUndefined(500)
+  getAll(@Param('stockName') stockName: string) {
+    return getActualPrice(stockName)
   }
 }
