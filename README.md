@@ -30,3 +30,9 @@ Defaults:
 - HTTP Server: [routing-controllers](https://github.com/typestack/routing-controllers) and [express](https://github.com/expressjs/express)
 - Tests: [jest](https://github.com/facebook/jest)
 - Logs: [winston](https://github.com/winstonjs/winston)
+
+
+## Next steps
+
+- add Documentation with [swagger](https://swagger.io/)
+- add authentication with [JWT](https://jwt.io/)
