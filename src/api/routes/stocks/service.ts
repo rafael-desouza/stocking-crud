@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { StockNotFoundError } from '~/@types/error'
 import { alphaVantageQuoteResult, alphaVantageQuoteResultHistory, ComparisonResult, History, Quote, StockGains } from '~/@types/stock'
+import { logger } from '~/common/logger'
 import { StocksToCompareParam } from './controller'
 
 export const getActualPrice = async (stockName: string) => {
@@ -18,6 +19,7 @@ export const getActualPrice = async (stockName: string) => {
     pricedAt: `${alphaRequestInstanceData['Global Quote']['07. latest trading day']}`
   }
 
+  logger.info(`Stock ${quote.name} priced at ${quote.lastPrice}`)
   return quote
 }
 
@@ -52,6 +54,7 @@ export const getActionHistory = async (stockName: string, from: string, to: stri
       }
     })
 
+    logger.info(`History for ${stockName} from ${from} to ${to}`)
     return history
   } catch (error) {
     throw new StockNotFoundError(stockName)
@@ -69,6 +72,7 @@ export const getComparison = async (stockName: string, stocksToCompare: StocksTo
     comparison.lastPrices.push(quote)
   }
 
+  logger.info(`Comparison for ${stockName} with ${stocksToCompare.stocksToCompare}`)
   return comparison
 }
 
@@ -86,5 +90,6 @@ export const getGains = async (stockName: string, purchasedAt: string, amount: n
     capitalGains: (lastState.closing - actualState.closing) * amount
   }
 
+  logger.info(`Gains for ${stockName}`)
   return gains
 }

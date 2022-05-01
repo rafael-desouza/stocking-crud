@@ -11,7 +11,7 @@ const mockedAxios = axios as jest.Mocked<typeof axios>
 describe('stock', () => {
   beforeAll(startServer)
 
-  test('should send a requistion to stock route and get status 204', async () => {
+  test('should send a requisition to stock route and get status 204', async () => {
     const expectAlphaVantageResult: alphaVantageQuoteResult = {
       'Global Quote': {
         '01. symbol': 'IBM',
@@ -27,10 +27,10 @@ describe('stock', () => {
       }
     }
 
-    const getActualPricePromisse = Promise.resolve({ data: expectAlphaVantageResult } as AxiosResponse)
+    const getActualPricePromises = Promise.resolve({ data: expectAlphaVantageResult } as AxiosResponse)
     const expectResult = { lastPrice: 132.21, name: 'IBM', pricedAt: '2022-04-29' }
 
-    mockedAxios.get.mockReturnValueOnce(getActualPricePromisse)
+    mockedAxios.get.mockReturnValueOnce(getActualPricePromises)
 
     const responseGet = await request(server).get(`/stocks/IBM/quote`)
 
@@ -43,16 +43,16 @@ describe('stock', () => {
       'Global Quote': {}
     }
 
-    const getActualPricePromisse = Promise.resolve({ data: expectAlphaVantageResult } as AxiosResponse)
+    const getActualPricePromises = Promise.resolve({ data: expectAlphaVantageResult } as AxiosResponse)
 
-    mockedAxios.get.mockReturnValueOnce(getActualPricePromisse)
+    mockedAxios.get.mockReturnValueOnce(getActualPricePromises)
     const responseGet = await request(server).get(`/stocks/inexistent/quote`)
 
     expect(responseGet.statusCode).toBe(400)
     expect(responseGet.body.message).toBe('Stock with name inexistent not found')
   })
 
-  test('should send a requisiton with a time filter and get result', async () => {
+  test('should send a requisition with a time filter and get result', async () => {
     const expectAlphaVantageHistoryResult = await expectedHistoryResult()
 
     const getHistoryPromise = Promise.resolve({ data: expectAlphaVantageHistoryResult } as AxiosResponse)
@@ -75,7 +75,7 @@ describe('stock', () => {
     expect(responseGet.body.message).toBe('Stock with name inexistent not found')
   })
 
-  test('should send a requisiton with two actions and receive a the both data', async () => {
+  test('should send a requisition with two actions and receive a the both data', async () => {
     const expectAlphaVantageResult1: alphaVantageQuoteResult = {
       'Global Quote': {
         '01. symbol': 'IBM',
@@ -121,9 +121,9 @@ describe('stock', () => {
       }
     }
 
-    const getActualPricePromisse1 = Promise.resolve({ data: expectAlphaVantageResult1 } as AxiosResponse)
-    const getActualPricePromisse2 = Promise.resolve({ data: expectAlphaVantageResult2 } as AxiosResponse)
-    const getActualPricePromisse3 = Promise.resolve({ data: expectAlphaVantageResult3 } as AxiosResponse)
+    const getActualPricePromises1 = Promise.resolve({ data: expectAlphaVantageResult1 } as AxiosResponse)
+    const getActualPricePromises2 = Promise.resolve({ data: expectAlphaVantageResult2 } as AxiosResponse)
+    const getActualPricePromises3 = Promise.resolve({ data: expectAlphaVantageResult3 } as AxiosResponse)
 
     const expectedResult = {
       lastPrices: [
@@ -146,9 +146,9 @@ describe('stock', () => {
     }
 
     mockedAxios.get
-      .mockReturnValueOnce(getActualPricePromisse1)
-      .mockReturnValueOnce(getActualPricePromisse2)
-      .mockReturnValueOnce(getActualPricePromisse3)
+      .mockReturnValueOnce(getActualPricePromises1)
+      .mockReturnValueOnce(getActualPricePromises2)
+      .mockReturnValueOnce(getActualPricePromises3)
 
     const responseGet = await request(server)
       .get(`/stocks/IBM/compare`)
@@ -158,7 +158,7 @@ describe('stock', () => {
     expect(responseGet.body).toEqual(expectedResult)
   })
 
-  test('should send a requisiton with a stock and receive a gain compare of period', async () => {
+  test('should send a requisition with a stock and receive a gain compare of period', async () => {
     const expectAlphaVantageHistoryResult = await expectedHistoryResult()
 
     const getHistoryPromise = Promise.resolve({ data: expectAlphaVantageHistoryResult } as AxiosResponse)
