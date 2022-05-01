@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { StockNotFoundError } from '~/@types/error'
-import { alphaVantageQuoteResult, alphaVantageQuoteResultHistory, History, Quote } from '~/@types/stock'
+import { alphaVantageQuoteResult, alphaVantageQuoteResultHistory, ComparisonResult, History, Quote } from '~/@types/stock'
+import { StocksToCompareParam } from './controller'
 
 export const getActualPrice = async (stockName: string) => {
   const apiKey = process.env.ALPHA_VANTAGE_API_KEY
@@ -55,4 +56,18 @@ export const getActionHistory = async (stockName: string, from: string, to: stri
   } catch (error) {
     throw new StockNotFoundError(stockName)
   }
+}
+
+export const getComparison = async (stockName: string, stocksToCompare: StocksToCompareParam) => {
+  const stocks = [stockName, ...stocksToCompare.stocksToCompare]
+  const comparison: ComparisonResult = {
+    lastPrices: []
+  }
+
+  for (const stock of stocks) {
+    const quote = await getActualPrice(stock)
+    comparison.lastPrices.push(quote)
+  }
+
+  return comparison
 }

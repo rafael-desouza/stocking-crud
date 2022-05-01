@@ -38,7 +38,7 @@ describe('stock', () => {
     expect(responseGet.body).toEqual(expectResult)
   })
 
-  test('should send a inexistent action name and return error', async () => {
+  test('should send a inexistent stock name and return error', async () => {
     const expectAlphaVantageResult = {
       'Global Quote': {}
     }
@@ -65,7 +65,7 @@ describe('stock', () => {
     expect(responseGet.body).toEqual(expectResult)
   })
 
-  test('should send a inexistent action name and return error on History', async () => {
+  test('should send a inexistent stock name and return error on History', async () => {
     const getHistoryPromise = Promise.resolve({ data: { error: '' } } as AxiosResponse)
 
     mockedAxios.get.mockReturnValueOnce(getHistoryPromise)
@@ -73,6 +73,89 @@ describe('stock', () => {
 
     expect(responseGet.statusCode).toBe(400)
     expect(responseGet.body.message).toBe('Stock with name inexistent not found')
+  })
+
+  test('should send a requisiton with two actions and receive a the both data', async () => {
+    const expectAlphaVantageResult1: alphaVantageQuoteResult = {
+      'Global Quote': {
+        '01. symbol': 'IBM',
+        '02. open': '135.1300',
+        '03. high': '135.5545',
+        '04. low': '132.0000',
+        '05. price': '132.2100',
+        '06. volume': '5078660',
+        '07. latest trading day': '2022-04-29' as unknown as Date,
+        '08. previous close': '135.7400',
+        '09. change': '-3.5300',
+        '10. change percent': '-2.6006%'
+      }
+    }
+
+    const expectAlphaVantageResult2: alphaVantageQuoteResult = {
+      'Global Quote': {
+        '01. symbol': 'FORD',
+        '02. open': '135.1300',
+        '03. high': '135.5545',
+        '04. low': '132.0000',
+        '05. price': '132.2100',
+        '06. volume': '5078660',
+        '07. latest trading day': '2022-04-29' as unknown as Date,
+        '08. previous close': '135.7400',
+        '09. change': '-3.5300',
+        '10. change percent': '-2.6006%'
+      }
+    }
+
+    const expectAlphaVantageResult3: alphaVantageQuoteResult = {
+      'Global Quote': {
+        '01. symbol': 'TEST',
+        '02. open': '135.1300',
+        '03. high': '135.5545',
+        '04. low': '132.0000',
+        '05. price': '132.2100',
+        '06. volume': '5078660',
+        '07. latest trading day': '2022-04-29' as unknown as Date,
+        '08. previous close': '135.7400',
+        '09. change': '-3.5300',
+        '10. change percent': '-2.6006%'
+      }
+    }
+
+    const getActualPricePromisse1 = Promise.resolve({ data: expectAlphaVantageResult1 } as AxiosResponse)
+    const getActualPricePromisse2 = Promise.resolve({ data: expectAlphaVantageResult2 } as AxiosResponse)
+    const getActualPricePromisse3 = Promise.resolve({ data: expectAlphaVantageResult3 } as AxiosResponse)
+
+    const expectedResult = {
+      lastPrices: [
+        {
+          lastPrice: 132.21,
+          name: 'IBM',
+          pricedAt: '2022-04-29'
+        },
+        {
+          lastPrice: 132.21,
+          name: 'FORD',
+          pricedAt: '2022-04-29'
+        },
+        {
+          lastPrice: 132.21,
+          name: 'TEST',
+          pricedAt: '2022-04-29'
+        }
+      ]
+    }
+
+    mockedAxios.get
+      .mockReturnValueOnce(getActualPricePromisse1)
+      .mockReturnValueOnce(getActualPricePromisse2)
+      .mockReturnValueOnce(getActualPricePromisse3)
+
+    const responseGet = await request(server)
+      .get(`/stocks/IBM/compare`)
+      .query({ stocksToCompare: ['FORD', 'TEST'] })
+
+    expect(responseGet.statusCode).toBe(200)
+    expect(responseGet.body).toEqual(expectedResult)
   })
 
   afterAll(closeServer)
