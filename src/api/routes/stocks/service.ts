@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { StockNotFoundError } from '~/@types/error'
-import { alphaVantageQuoteResult, alphaVantageQuoteResultHistory, ComparisonResult, History, Quote } from '~/@types/stock'
+import { alphaVantageQuoteResult, alphaVantageQuoteResultHistory, ComparisonResult, History, Quote, StockGains } from '~/@types/stock'
 import { StocksToCompareParam } from './controller'
 
 export const getActualPrice = async (stockName: string) => {
@@ -70,4 +70,21 @@ export const getComparison = async (stockName: string, stocksToCompare: StocksTo
   }
 
   return comparison
+}
+
+export const getGains = async (stockName: string, purchasedAt: string, amount: number) => {
+  const history = await getActionHistory(stockName, purchasedAt, new Date().toISOString())
+  const actualState = history.prices[0]
+  const lastState = history.prices[history.prices.length - 1]
+
+  const gains: StockGains = {
+    name: stockName,
+    lastPrice: actualState.closing,
+    priceAtDate: lastState.closing,
+    purchasedAmount: amount,
+    purchasedAt: purchasedAt,
+    capitalGains: (lastState.closing - actualState.closing) * amount
+  }
+
+  return gains
 }

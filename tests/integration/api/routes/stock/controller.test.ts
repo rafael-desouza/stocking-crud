@@ -158,5 +158,25 @@ describe('stock', () => {
     expect(responseGet.body).toEqual(expectedResult)
   })
 
+  test('should send a requisiton with a stock and receive a gain compare of period', async () => {
+    const expectAlphaVantageHistoryResult = await expectedHistoryResult()
+
+    const getHistoryPromise = Promise.resolve({ data: expectAlphaVantageHistoryResult } as AxiosResponse)
+    const expectResult = {
+      name: 'IBM',
+      lastPrice: 132.21,
+      priceAtDate: 130.15,
+      purchasedAmount: '25',
+      purchasedAt: '2022-04-01',
+      capitalGains: -51.50000000000006
+    }
+
+    mockedAxios.get.mockReturnValueOnce(getHistoryPromise)
+    const responseGet = await request(server).get(`/stocks/IBM/gains?purchasedAt=2022-04-01&purchasedAmount=25`)
+
+    expect(responseGet.statusCode).toBe(200)
+    expect(responseGet.body).toEqual(expectResult)
+  })
+
   afterAll(closeServer)
 })

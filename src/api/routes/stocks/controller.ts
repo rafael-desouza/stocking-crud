@@ -1,5 +1,5 @@
 import { Get, HttpCode, JsonController, OnUndefined, Param, QueryParams } from 'routing-controllers'
-import { getActionHistory, getActualPrice, getComparison } from './service'
+import { getActionHistory, getActualPrice, getComparison, getGains } from './service'
 
 @JsonController('/stocks')
 export class StocksController {
@@ -23,6 +23,18 @@ export class StocksController {
   getComparison(@Param('stockName') stockName: string, @QueryParams() stocksToCompare: StocksToCompareParam) {
     return getComparison(stockName, stocksToCompare)
   }
+
+  @Get('/:stockName/gains')
+  @HttpCode(200)
+  @OnUndefined(500)
+  getGains(@Param('stockName') stockName: string, @QueryParams() queryParams: StockGainsParam) {
+    return getGains(stockName, queryParams.purchasedAt, queryParams.purchasedAmount)
+  }
+}
+
+type StockGainsParam = {
+  purchasedAt: string
+  purchasedAmount: number
 }
 
 type StockParam = {
