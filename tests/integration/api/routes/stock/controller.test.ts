@@ -2,8 +2,8 @@ import axios, { AxiosResponse } from 'axios'
 
 import request from 'supertest'
 import { startServer, closeServer, runningServer as server } from 'tests/helpers/server'
+import { expectedHistoryResult, expectedHistoryResultConverted } from 'tests/helpers/stock'
 import { alphaVantageQuoteResult } from '~/@types/stock'
-import { getActualPrice } from '~/api/routes/stocks/service'
 
 jest.mock('axios')
 const mockedAxios = axios as jest.Mocked<typeof axios>
@@ -32,7 +32,7 @@ describe('stock', () => {
 
     mockedAxios.get.mockReturnValueOnce(getActualPricePromisse)
 
-    const responseGet = await request(server).get(`/stock/IBM/quote`)
+    const responseGet = await request(server).get(`/stocks/IBM/quote`)
 
     expect(responseGet.statusCode).toBe(200)
     expect(responseGet.body).toEqual(expectResult)
@@ -46,7 +46,30 @@ describe('stock', () => {
     const getActualPricePromisse = Promise.resolve({ data: expectAlphaVantageResult } as AxiosResponse)
 
     mockedAxios.get.mockReturnValueOnce(getActualPricePromisse)
-    const responseGet = await request(server).get(`/stock/inexistent/quote`)
+    const responseGet = await request(server).get(`/stocks/inexistent/quote`)
+
+    expect(responseGet.statusCode).toBe(400)
+    expect(responseGet.body.message).toBe('Stock with name inexistent not found')
+  })
+
+  test('should send a requisiton with a time filter and get result', async () => {
+    const expectAlphaVantageHistoryResult = await expectedHistoryResult()
+
+    const getHistoryPromise = Promise.resolve({ data: expectAlphaVantageHistoryResult } as AxiosResponse)
+    const expectResult = await expectedHistoryResultConverted()
+
+    mockedAxios.get.mockReturnValueOnce(getHistoryPromise)
+    const responseGet = await request(server).get(`/stocks/IBM/history?from=2022-04-25&to=2022-04-29`)
+
+    expect(responseGet.statusCode).toBe(200)
+    expect(responseGet.body).toEqual(expectResult)
+  })
+
+  test('should send a inexistent action name and return error on History', async () => {
+    const getHistoryPromise = Promise.resolve({ data: { error: '' } } as AxiosResponse)
+
+    mockedAxios.get.mockReturnValueOnce(getHistoryPromise)
+    const responseGet = await request(server).get(`/stocks/inexistent/history?from=2022-04-25&to=2022-04-29`)
 
     expect(responseGet.statusCode).toBe(400)
     expect(responseGet.body.message).toBe('Stock with name inexistent not found')

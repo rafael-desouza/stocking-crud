@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { StockNotFoundError } from '~/@types/error'
-import { alphaVantageQuoteResult, Quote } from '~/@types/stock'
+import { alphaVantageQuoteResult, alphaVantageQuoteResultHistory, History, Quote } from '~/@types/stock'
 
 export const getActualPrice = async (stockName: string) => {
   const apiKey = process.env.ALPHA_VANTAGE_API_KEY
@@ -18,4 +18,41 @@ export const getActualPrice = async (stockName: string) => {
   }
 
   return quote
+}
+
+export const getActionHistory = async (stockName: string, from: string, to: string) => {
+  const apiKey = process.env.ALPHA_VANTAGE_API_KEY
+  const applyFunction = 'TIME_SERIES_DAILY'
+  const fromDate = new Date(from)
+  const toDate = new Date(to)
+
+  try {
+    const responseGet = await axios.get(`https://www.alphavantage.co/query?function=${applyFunction}&symbol=${stockName}&apikey=${apiKey}`)
+    const result: alphaVantageQuoteResultHistory = responseGet.data
+
+    const history: History = {
+      name: stockName,
+      prices: []
+    }
+
+    Object.keys(result['Time Series (Daily)']).map(date => {
+      const entry = result['Time Series (Daily)'][date]
+      const dateFilter = new Date(date)
+
+      if (dateFilter >= fromDate && dateFilter <= toDate) {
+        history.prices.push({
+          opening: parseFloat(entry['1. open']),
+          low: parseFloat(entry['3. low']),
+          high: parseFloat(entry['2. high']),
+          closing: parseFloat(entry['4. close']),
+          pricedAt: date,
+          volume: parseFloat(entry['5. volume'])
+        })
+      }
+    })
+
+    return history
+  } catch (error) {
+    throw new StockNotFoundError(stockName)
+  }
 }
