@@ -5,11 +5,11 @@ import { startServer, closeServer, runningServer as server } from 'tests/helpers
 describe('Health Check', () => {
   beforeAll(startServer)
 
-  test('deve retornar response com status code 204', done => {
+  test('should return 204 status code into response', done => {
     request(server).get('/health-check').expect(204, done)
   })
 
-  test('deve retornar response com status code 404', done => {
+  test('should return 404 status code into response', done => {
     request(server).get('/not-found-route').expect(404, done)
   })
 

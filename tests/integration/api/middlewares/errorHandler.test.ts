@@ -4,12 +4,12 @@ import { startServer, closeServer, runningServer as server } from 'tests/helpers
 describe('Error Handler', () => {
   beforeAll(startServer)
 
-  test('deve retornar response com status code 404', async () => {
+  test('should return 404 status code into response', async () => {
     const getResponse = await request(server).get(`/foo`)
     expect(getResponse.statusCode).toBe(404)
   })
 
-  test('deve retornar response com status code 400', async () => {
+  test('should return 400 status code into response', async () => {
     const getResponse = await request(server).get(`/error-sample`)
     expect(getResponse.statusCode).toBe(400)
     expect(getResponse.body.code).toBe(400)

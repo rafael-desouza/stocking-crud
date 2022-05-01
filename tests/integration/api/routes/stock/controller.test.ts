@@ -11,7 +11,7 @@ const mockedAxios = axios as jest.Mocked<typeof axios>
 describe('stock', () => {
   beforeAll(startServer)
 
-  test('deve enviar uma requisição para buscar o preço de uma ação, retornando um objeto do tipo Quote', async () => {
+  test('should send a requistion to stock route and get status 204', async () => {
     const expectAlphaVantageResult: alphaVantageQuoteResult = {
       'Global Quote': {
         '01. symbol': 'IBM',
@@ -36,7 +36,7 @@ describe('stock', () => {
     expect(responseGet.statusCode).toBe(204)
   })
 
-  test('deve buscar o valor de uma ação e retornar transformado em resultado do tipo Quote', async () => {
+  test('should find a value of an action and bring parsed into Quote format', async () => {
     const expectAlphaVantageResult: alphaVantageQuoteResult = {
       'Global Quote': {
         '01. symbol': 'IBM',
