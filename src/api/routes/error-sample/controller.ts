@@ -1,9 +1,9 @@
-import { Get, JsonController } from "routing-controllers";
+import { Get, JsonController } from 'routing-controllers'
 
 @JsonController('/error-sample')
 export class ErrorSampleController {
   @Get('/')
   getAll() {
-    throw new Error('This is an error example');
+    throw new Error('This is an error example')
   }
 }

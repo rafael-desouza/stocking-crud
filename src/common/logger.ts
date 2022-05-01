@@ -1,6 +1,5 @@
 import { createLogger, transports, Logger, format } from 'winston'
 
-
 export class LoggingService {
   logger: Logger
 
@@ -13,18 +12,12 @@ export class LoggingService {
     format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
   )
 
-
-
   validateSizeLimit(input: string) {
     const regex = /[0-9]+[k,m,g]/
     return regex.test(input)
   }
 
   constructor() {
-    const sizeLimitLog = '20m'
-
-
-
     this.logger = createLogger({
       format: this.format,
       transports: [new transports.Console()],

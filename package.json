@@ -10,7 +10,8 @@
     "test": "set NODE_ENV=test&& jest --i --no-cache --verbose --runInBand --bail",
     "build": "yarn build:babel&&yarn build:copy",
     "build:babel": "set BABEL_ENV=build&& set NODE_ENV=production&& babel src --extensions \".ts\" --out-dir dist --source-maps --copy-files --no-copy-ignored --delete-dir-on-start --no-comments",
-    "build:copy": "copy package.json dist"
+    "build:copy": "copy package.json dist",
+    "lint": "eslint src --max-warnings=0"
   },
   "dependencies": {
     "body-parser": "^1.20.0",
